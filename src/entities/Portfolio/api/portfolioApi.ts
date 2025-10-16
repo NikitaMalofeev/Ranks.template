@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { API_BASE_URL, API_ENDPOINTS } from 'shared/config/api.config';
+import { apiClient } from 'shared/api/axios.config';
+import { API_ENDPOINTS } from 'shared/config/api.config';
 import type {
   Portfolio,
   ReferenceData,
@@ -11,33 +11,34 @@ import type {
 
 export const portfolioApi = {
   // Get general reference data (portfolios, strategies, etc.)
+  // Токен автоматически добавляется через axios interceptor
   getReferenceData: async (): Promise<ReferenceData> => {
-    const response = await axios.get(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.GET_REFERENCE_DATA}`
+    const response = await apiClient.get(
+      API_ENDPOINTS.ROBOADVISING.GET_REFERENCE_DATA
     );
     return response.data;
   },
 
   // Get all portfolios
   getPortfolios: async (): Promise<Portfolio[]> => {
-    const response = await axios.get(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}`
+    const response = await apiClient.get(
+      API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS
     );
     return response.data;
   },
 
   // Get single portfolio by ID
   getPortfolioById: async (id: string | number): Promise<Portfolio> => {
-    const response = await axios.get(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}${id}/`
+    const response = await apiClient.get(
+      `${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}${id}/`
     );
     return response.data;
   },
 
   // Create new portfolio
   createPortfolio: async (data: CreatePortfolioDto): Promise<Portfolio> => {
-    const response = await axios.post(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.CREATE_PORTFOLIO}`,
+    const response = await apiClient.post(
+      API_ENDPOINTS.ROBOADVISING.CREATE_PORTFOLIO,
       data
     );
     return response.data;
@@ -45,8 +46,8 @@ export const portfolioApi = {
 
   // Update portfolio
   updatePortfolio: async (data: UpdatePortfolioDto): Promise<Portfolio> => {
-    const response = await axios.put(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.UPDATE_PORTFOLIO}${data.id}/`,
+    const response = await apiClient.put(
+      `${API_ENDPOINTS.ROBOADVISING.UPDATE_PORTFOLIO}${data.id}/`,
       data
     );
     return response.data;
@@ -54,15 +55,15 @@ export const portfolioApi = {
 
   // Delete portfolio
   deletePortfolio: async (id: string | number): Promise<void> => {
-    await axios.delete(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.DELETE_PORTFOLIO}${id}/`
+    await apiClient.delete(
+      `${API_ENDPOINTS.ROBOADVISING.DELETE_PORTFOLIO}${id}/`
     );
   },
 
   // Rebalance portfolio
   rebalancePortfolio: async (data: RebalanceRequest): Promise<RebalanceResponse> => {
-    const response = await axios.post(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.REBALANCE_PORTFOLIO}`,
+    const response = await apiClient.post(
+      API_ENDPOINTS.ROBOADVISING.REBALANCE_PORTFOLIO,
       data
     );
     return response.data;
@@ -70,16 +71,16 @@ export const portfolioApi = {
 
   // Duplicate portfolio
   duplicatePortfolio: async (id: string | number): Promise<Portfolio> => {
-    const response = await axios.post(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}${id}/duplicate/`
+    const response = await apiClient.post(
+      `${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}${id}/duplicate/`
     );
     return response.data;
   },
 
   // Toggle portfolio status
   togglePortfolioStatus: async (id: string | number): Promise<Portfolio> => {
-    const response = await axios.patch(
-      `${API_BASE_URL}${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}${id}/toggle-status/`
+    const response = await apiClient.patch(
+      `${API_ENDPOINTS.ROBOADVISING.GET_PORTFOLIOS}${id}/toggle-status/`
     );
     return response.data;
   },

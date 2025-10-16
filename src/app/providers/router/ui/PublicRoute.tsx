@@ -8,12 +8,14 @@ interface PublicRouteProps {
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
-    const token = useSelector((state: RootState) => state.user.token);
+    const { token, isAuthenticated } = useSelector((state: RootState) => state.user);
 
-    if (token) {
-        return <Navigate to="/" replace />;
+    // Если пользователь уже авторизован, редирект на главную страницу
+    if (token && isAuthenticated && token.trim() !== '') {
+        return <Navigate to="/admin" replace />;
     }
 
+    // Если не авторизован, показываем страницу (login)
     return <>{children}</>;
 };
 

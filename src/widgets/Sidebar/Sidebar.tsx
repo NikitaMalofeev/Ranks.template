@@ -192,17 +192,18 @@ export const Sidebar = ({ collapsed = false, onCollapse, onMenuSelect, onSetting
   // Фильтруем меню на основе настроек видимости
   const menuItems = useMemo(() => {
     const visibleKeys = new Set(visibleMenuSettings.map(item => item.key));
-    return allMenuItems.filter(item => visibleKeys.has(item.key as string));
+    return allMenuItems.filter(item => item && 'key' in item && visibleKeys.has(item.key as string));
   }, [visibleMenuSettings]);
 
   const handleMenuClick: MenuProps['onClick'] = (e) => {
     // Find label for the clicked item
     const findLabel = (items: MenuItem[], key: string): string => {
       for (const item of items) {
-        if (item && 'key' in item && item.key === key) {
+        if (!item) continue;
+        if ('key' in item && item.key === key && 'label' in item) {
           return item.label as string;
         }
-        if (item && 'children' in item && item.children) {
+        if ('children' in item && item.children) {
           const found = findLabel(item.children as MenuItem[], key);
           if (found) return found;
         }

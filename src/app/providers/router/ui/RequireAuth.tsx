@@ -8,9 +8,10 @@ interface RequireAuthRouteProps {
 }
 
 const RequireAuthRoute: React.FC<RequireAuthRouteProps> = ({ children }) => {
-    const token = useSelector((state: RootState) => state.user.token);
+    const { token, isAuthenticated } = useSelector((state: RootState) => state.user);
 
-    if (!token) {
+    // Проверяем и токен, и флаг isAuthenticated
+    if (!token || !isAuthenticated || token.trim() === '') {
         return <Navigate to="/login" replace />;
     }
 

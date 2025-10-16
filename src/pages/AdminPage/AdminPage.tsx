@@ -1,7 +1,7 @@
 import { useState, lazy, Suspense } from 'react';
 import { Layout, Tabs, Card, Table, Typography, Statistic, Row, Col, Button, Modal, Switch, message } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
-import type { ColumnsType } from 'antd';
+import type { TableColumnsType } from 'antd';
 import { useSelector } from 'react-redux';
 import { RootState } from 'app/providers/store/config/store';
 import { useAppDispatch } from 'shared/hooks/useAppDispatch';
@@ -86,23 +86,23 @@ const AdminPage = () => {
     { key: '3', name: 'Товар В', price: 2500, stock: 30, category: 'Электроника' },
   ];
 
-  const invoiceColumns: ColumnsType<InvoiceDataType> = [
+  const invoiceColumns: TableColumnsType<InvoiceDataType> = [
     { title: '№ Счета', dataIndex: 'invoiceNumber', key: 'invoiceNumber' },
     { title: 'Дата', dataIndex: 'date', key: 'date' },
-    { title: 'Сумма', dataIndex: 'amount', key: 'amount', render: (amount) => `${amount.toFixed(2)} ₽` },
+    { title: 'Сумма', dataIndex: 'amount', key: 'amount', render: (amount: number) => `${amount.toFixed(2)} ₽` },
     { title: 'Статус', dataIndex: 'status', key: 'status' },
   ];
 
-  const userColumns: ColumnsType<UserDataType> = [
+  const userColumns: TableColumnsType<UserDataType> = [
     { title: 'Имя', dataIndex: 'name', key: 'name' },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     { title: 'Роль', dataIndex: 'role', key: 'role' },
     { title: 'Статус', dataIndex: 'status', key: 'status' },
   ];
 
-  const productColumns: ColumnsType<ProductDataType> = [
+  const productColumns: TableColumnsType<ProductDataType> = [
     { title: 'Название', dataIndex: 'name', key: 'name' },
-    { title: 'Цена', dataIndex: 'price', key: 'price', render: (price) => `${price} ₽` },
+    { title: 'Цена', dataIndex: 'price', key: 'price', render: (price: number) => `${price} ₽` },
     { title: 'Остаток', dataIndex: 'stock', key: 'stock' },
     { title: 'Категория', dataIndex: 'category', key: 'category' },
   ];
