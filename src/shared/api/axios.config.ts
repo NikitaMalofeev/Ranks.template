@@ -18,9 +18,7 @@ apiClient.interceptors.request.use(
     const token = state.user.token;
 
     if (token) {
-      // Попробуем формат "Token <token>" вместо "Bearer <token>"
-      // Некоторые Django REST Framework API используют такой формат
-      config.headers.Authorization = `Token ${token}`;
+      config.headers.Authorization = `Bearer ${token}`;
       console.log('[API Request] URL:', config.url);
       console.log('[API Request] Token (first 20 chars):', token.substring(0, 20) + '...');
       console.log('[API Request] Authorization header:', config.headers.Authorization);
