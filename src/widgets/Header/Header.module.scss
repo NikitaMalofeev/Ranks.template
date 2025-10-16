@@ -1,0 +1,36 @@
+.header {
+  background: #001529;
+  padding: 0 50px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.logo {
+  color: white !important;
+  margin: 0 !important;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.logoutBtn {
+  color: white;
+
+  &:hover {
+    color: #1890ff !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+}

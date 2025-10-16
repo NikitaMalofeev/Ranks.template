@@ -1,0 +1,31 @@
+@import './variables/global.scss';
+
+.app {
+  min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+// Antd customization
+:where(.css-dev-only-do-not-override-1km3mtt).ant-btn-primary {
+  background-color: var(--primary-color);
+}
+
+// Custom scrollbar
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--border-radius-base);
+
+  &:hover {
+    background: #bfbfbf;
+  }
+}

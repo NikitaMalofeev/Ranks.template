@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev)",
+      "Bash(npm install)",
+      "Bash(timeout:*)",
+      "Bash(mkdir:*)",
+      "Bash(unzip:*)",
+      "Bash(python3:*)",
+      "Bash(cat:*)",
+      "Bash(bash:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

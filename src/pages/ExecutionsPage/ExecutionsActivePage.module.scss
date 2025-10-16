@@ -1,0 +1,64 @@
+.executionsActivePage {
+  padding: 24px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .icon {
+      font-size: 32px;
+      color: #1890ff;
+    }
+
+    .connectionStatus {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+  }
+
+  .actionButtons {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .table {
+    :global {
+      .ant-table-thead > tr > th {
+        background-color: #f0f2f5;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .pausedRow {
+    background-color: #fff7e6;
+  }
+
+  .executingRow {
+    background-color: #e6f7ff;
+
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      background-color: #e6f7ff;
+    }
+    50% {
+      background-color: #bae7ff;
+    }
+  }
+
+  .emptyState {
+    text-align: center;
+    padding: 48px 0;
+    color: #8c8c8c;
+    font-size: 16px;
+  }
+}

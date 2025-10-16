@@ -1,0 +1,51 @@
+.executionsHistoryPage {
+  padding: 24px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .icon {
+      font-size: 32px;
+      color: #1890ff;
+    }
+  }
+
+  .filtersCard {
+    margin-bottom: 16px;
+    background-color: #fafafa;
+
+    .filterItem {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      label {
+        font-weight: 500;
+        font-size: 14px;
+        color: #262626;
+      }
+    }
+  }
+
+  .actionButtons {
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .statsRow {
+    margin-bottom: 24px;
+  }
+
+  .table {
+    :global {
+      .ant-table-thead > tr > th {
+        background-color: #f0f2f5;
+        font-weight: 600;
+      }
+    }
+  }
+}

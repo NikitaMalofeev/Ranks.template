@@ -1,0 +1,15 @@
+.dashboardPage {
+  padding: 24px;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .icon {
+      font-size: 32px;
+      color: #1890ff;
+    }
+  }
+}

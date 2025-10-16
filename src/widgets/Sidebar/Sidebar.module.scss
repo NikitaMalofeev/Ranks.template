@@ -1,0 +1,82 @@
+@use 'app/styles/mixins' as mix;
+
+.sidebar {
+  min-height: 100vh;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+
+  :global(.ant-layout-sider-trigger) {
+    background: #002140;
+    transition: all 0.3s;
+
+    &:hover {
+      background: #003a70;
+    }
+  }
+}
+
+.logo {
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.logoContent {
+  display: flex;
+  align-items: center;
+}
+
+.logoIcon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+.logoText {
+  margin-left: 12px;
+}
+
+.settingsButton {
+  color: rgba(255, 255, 255, 0.65);
+  transition: all 0.3s;
+
+  &:hover {
+    color: #1890ff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.settingsButtonCollapsed {
+  color: rgba(255, 255, 255, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #1890ff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.menu {
+  margin-top: 16px;
+
+  :global(.ant-menu-item) {
+    margin: 4px 8px;
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  :global(.ant-menu-item-selected) {
+    background: #1890ff !important;
+  }
+}
