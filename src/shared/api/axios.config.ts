@@ -18,24 +18,38 @@ apiClient.interceptors.request.use(
     const token = state.user.token;
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      // Попробуем формат "Token <token>" вместо "Bearer <token>"
+      // Некоторые Django REST Framework API используют такой формат
+      config.headers.Authorization = `Token ${token}`;
+      console.log('[API Request] URL:', config.url);
+      console.log('[API Request] Token (first 20 chars):', token.substring(0, 20) + '...');
+      console.log('[API Request] Authorization header:', config.headers.Authorization);
+    } else {
+      console.warn('[API Request] No token found in Redux state!');
     }
 
     return config;
   },
   (error) => {
+    console.error('[API Request Error]:', error);
     return Promise.reject(error);
   }
 );
 
 // Response interceptor - handle errors
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('[API Response] Success:', response.config.url, 'Status:', response.status);
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid - redirect to login
-      // This will be handled by RequireAuth component
-      console.error('Authentication error:', error);
+      console.error('[API Response] 401 Unauthorized!');
+      console.error('[API Response] URL:', error.config?.url);
+      console.error('[API Response] Token used:', error.config?.headers?.Authorization);
+      console.error('[API Response] Error details:', error.response?.data);
+    } else {
+      console.error('[API Response] Error:', error.response?.status, error.message);
     }
 
     return Promise.reject(error);
