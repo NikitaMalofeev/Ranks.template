@@ -1,8 +1,14 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://test.webbroker.ranks.pro';
+// Определяем базовый URL в зависимости от окружения
+const environment = import.meta.env.VITE_ENVIRONMENT || 'TEST';
+const isProd = environment === 'PROD';
+
+export const API_BASE_URL = isProd
+  ? (import.meta.env.VITE_API_BASE_URL_PROD || 'https://autopilotback.ranks.pro/main')
+  : (import.meta.env.VITE_API_BASE_URL || 'https://test.webbroker.ranks.pro/main');
 
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: '/main/robo/admin_login/',
+    LOGIN: '/robo/admin_login/', // Убрали /main (теперь в базовом URL)
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
   },
@@ -11,11 +17,11 @@ export const API_ENDPOINTS = {
     UPDATE: '/user/update',
   },
   ROBOADVISING: {
-    GET_REFERENCE_DATA: '/main/roboadvising/get_general_reference_data/',
-    GET_PORTFOLIOS: '/main/roboadvising/portfolios/',
-    CREATE_PORTFOLIO: '/main/roboadvising/portfolios/create/',
-    UPDATE_PORTFOLIO: '/main/roboadvising/portfolios/update/',
-    DELETE_PORTFOLIO: '/main/roboadvising/portfolios/delete/',
-    REBALANCE_PORTFOLIO: '/main/roboadvising/portfolios/rebalance/',
+    GET_REFERENCE_DATA: '/roboadvising/get_general_reference_data/', // Убрали /main
+    GET_PORTFOLIOS: '/roboadvising/portfolios/', // Убрали /main
+    CREATE_PORTFOLIO: '/roboadvising/portfolios/create/', // Убрали /main
+    UPDATE_PORTFOLIO: '/roboadvising/portfolios/update/', // Убрали /main
+    DELETE_PORTFOLIO: '/roboadvising/portfolios/delete/', // Убрали /main
+    REBALANCE_PORTFOLIO: '/roboadvising/portfolios/rebalance/', // Убрали /main
   },
 };

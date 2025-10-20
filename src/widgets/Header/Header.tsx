@@ -16,9 +16,17 @@ export const Header = () => {
   const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
   const handleLogout = () => {
+    // Очистить Redux state
     dispatch(logout());
+
+    // Очистить localStorage
     localStorage.removeItem('persist:root');
-    navigate('/login');
+
+    // Очистить sessionStorage
+    sessionStorage.clear();
+
+    // Перенаправить на страницу логина
+    navigate('/login', { replace: true });
   };
 
   return (

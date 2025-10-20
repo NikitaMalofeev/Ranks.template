@@ -5,6 +5,7 @@ import { apiClient } from 'shared/api/axios.config';
 export interface LoginCredentials {
   username: string;
   password: string;
+  token?: string; // Опциональный токен для PROD окружения
 }
 
 export interface LoginResponse {
@@ -15,10 +16,42 @@ export interface LoginResponse {
 export const userApi = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {
     console.log('[Login API] Sending login request...');
-    const response = await axios.post(
-      `${API_BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`,
-      credentials
-    );
+
+    // Определяем окружение
+    const environment = import.meta.env.VITE_ENVIRONMENT || 'TEST';
+    const isProd = environment === 'PROD';
+
+    // Определяем URL для запроса
+    let loginUrl: string;
+    let requestBody: any;
+
+    if (isProd) {
+      // PROD окружение - используем специальный endpoint и добавляем token
+      const prodEndpoint = import.meta.env.VITE_PROD_LOGIN_ENDPOINT || '/robo/hnWaeeZ3CYeqhEhNs9ZvBbolEkJsNBPNLKgwSjsTovNBk2/';
+      loginUrl = `${API_BASE_URL}${prodEndpoint}`;
+      requestBody = {
+        username: credentials.username,
+        password: credentials.password,
+        token: credentials.token
+      };
+      console.log('[Login API] Using PROD environment');
+      console.log('[Login API] Base URL:', API_BASE_URL);
+      console.log('[Login API] Endpoint:', prodEndpoint);
+      console.log('[Login API] Full URL:', loginUrl);
+    } else {
+      // TEST окружение - используем обычный endpoint без token
+      loginUrl = `${API_BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`;
+      requestBody = {
+        username: credentials.username,
+        password: credentials.password
+      };
+      console.log('[Login API] Using TEST environment');
+      console.log('[Login API] Base URL:', API_BASE_URL);
+      console.log('[Login API] Endpoint:', API_ENDPOINTS.AUTH.LOGIN);
+      console.log('[Login API] Full URL:', loginUrl);
+    }
+
+    const response = await axios.post(loginUrl, requestBody);
 
     console.log('[Login API] Response received:', response.data);
 

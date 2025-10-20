@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Form, Input, Button, Typography, Card, Alert, message, Space } from 'antd';
+import { Form, Input, Button, Typography, Card, Alert, message, Space, Tag } from 'antd';
 import { UserOutlined, LockOutlined, ClearOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -13,12 +13,17 @@ const { Title, Text } = Typography;
 interface LoginFormValues {
   username: string;
   password: string;
+  token?: string;
 }
 
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state: RootState) => state.user);
+
+  // Определяем окружение
+  const environment = import.meta.env.VITE_ENVIRONMENT || 'TEST';
+  const isProd = environment === 'PROD';
 
   useEffect(() => {
     // Очистить ошибки при монтировании компонента
@@ -51,9 +56,14 @@ const LoginPage = () => {
   return (
     <div className={styles.loginPage}>
       <Card className={styles.loginCard}>
-        <Title level={2} className={styles.title}>
-          Login
-        </Title>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <Title level={2} className={styles.title} style={{ margin: 0 }}>
+            Login
+          </Title>
+          <Tag color={isProd ? 'red' : 'blue'} style={{ fontSize: 12 }}>
+            {isProd ? 'PRODUCTION' : 'TEST'}
+          </Tag>
+        </div>
 
         {error && (
           <Alert
@@ -72,8 +82,15 @@ const LoginPage = () => {
           autoComplete="off"
           layout="vertical"
           initialValues={{
-            username: 'admin',
-            password: 'YXL%jhR2|KCVb4@wF7D~TK#7cgbdZ#vZ'
+            username: isProd
+              ? import.meta.env.VITE_LOGIN_USERNAME_PROD || ''
+              : import.meta.env.VITE_LOGIN_USERNAME || '',
+            password: isProd
+              ? import.meta.env.VITE_LOGIN_PASSWORD_PROD || ''
+              : import.meta.env.VITE_LOGIN_PASSWORD || '',
+            token: isProd
+              ? import.meta.env.VITE_LOGIN_TOKEN_PROD || ''
+              : undefined
           }}
         >
           <Form.Item
@@ -100,6 +117,20 @@ const LoginPage = () => {
             />
           </Form.Item>
 
+          {isProd && (
+            <Form.Item
+              name="token"
+              rules={[{ required: true, message: 'Please input your token!' }]}
+            >
+              <Input
+                prefix={<LockOutlined />}
+                placeholder="Token"
+                size="large"
+                disabled={isLoading}
+              />
+            </Form.Item>
+          )}
+
           <Form.Item>
             <Button
               type="primary"
@@ -111,6 +142,14 @@ const LoginPage = () => {
               Sign In
             </Button>
           </Form.Item>
+
+          {isProd && (
+            <div style={{ textAlign: 'center', marginTop: -8, marginBottom: 8 }}>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                Production Environment
+              </Text>
+            </div>
+          )}
         </Form>
 
         <div style={{ marginTop: 16, textAlign: 'center' }}>
