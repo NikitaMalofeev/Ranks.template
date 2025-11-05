@@ -23,5 +23,12 @@ export const API_ENDPOINTS = {
     UPDATE_PORTFOLIO: '/roboadvising/portfolios/update/', // Убрали /main
     DELETE_PORTFOLIO: '/roboadvising/portfolios/delete/', // Убрали /main
     REBALANCE_PORTFOLIO: '/roboadvising/portfolios/rebalance/', // Убрали /main
+    ADD_MODEL_PORTFOLIO: '/roboadvising/add_robo_menu_enter_model_portfolio/',
+    VIEW_MODEL_PORTFOLIO: '/roboadvising/view_robo_menu_enter_model_portfolio/',
+    GET_ALL_STRATEGY: '/roboadvising/get_all_strategy/',
+    UPDATE_MODEL_PORTFOLIO_ITEM: '/roboadvising/update_item_robo_menu_enter_model_portfolio/',
+    CREATE_STRATEGY: '/roboadvising/create_strategy/',
+    UPDATE_STRATEGY: '/roboadvising/update_strategy/',
+    DELETE_STRATEGY: '/roboadvising/delete_strategy/',
   },
 };

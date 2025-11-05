@@ -84,7 +84,7 @@ export const userApi = {
       API_ENDPOINTS.AUTH.LOGOUT,
       {},
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `token ${token}` },
       }
     );
   },
@@ -93,7 +93,7 @@ export const userApi = {
     const response = await apiClient.get(
       API_ENDPOINTS.USER.PROFILE,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `token ${token}` },
       }
     );
     return response.data;

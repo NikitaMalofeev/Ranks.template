@@ -60,11 +60,11 @@ export const Sidebar = ({ collapsed = false, onCollapse, onMenuSelect, onSetting
           icon: <UserOutlined />,
           label: 'Мой профиль',
         },
-        {
-          key: 'cabinet-statistics',
-          icon: <BarChartOutlined />,
-          label: 'Моя статистика',
-        },
+        // {
+        //   key: 'cabinet-statistics',
+        //   icon: <BarChartOutlined />,
+        //   label: 'Моя статистика',
+        // },
       ],
     },
     {
@@ -94,11 +94,11 @@ export const Sidebar = ({ collapsed = false, onCollapse, onMenuSelect, onSetting
           icon: <FileTextOutlined />,
           label: 'Все стратегии',
         },
-        {
-          key: 'strategies-backtesting',
-          icon: <LineChartOutlined />,
-          label: 'Бэктестинг',
-        },
+        // {
+        //   key: 'strategies-backtesting',
+        //   icon: <LineChartOutlined />,
+        //   label: 'Бэктестинг',
+        // },
       ],
     },
     {

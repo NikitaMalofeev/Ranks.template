@@ -91,3 +91,55 @@ export interface RebalanceResponse {
   }[];
   estimatedCost: number;
 }
+
+// Model Portfolio types
+export interface ModelPortfolioItem {
+  is_active: boolean;
+  isin: string;
+  share: number;
+}
+
+export interface AddModelPortfolioRequest {
+  id_strategy: number;
+  items: ModelPortfolioItem[];
+}
+
+export interface ViewModelPortfolioRequest {
+  id_strategy: number;
+}
+
+export interface ViewModelPortfolioResponse {
+  id_strategy: number;
+  items: ModelPortfolioItem[];
+}
+
+export type StrategyType = 'russian' | 'global' | 'mixed';
+
+// Market types from backend
+export type MarketType = 'market_robo_usa' | 'market_robo_russian';
+
+// Instrument types from backend
+export type InstrumentType = 'instrument_bonds' | 'instrument_shares';
+
+export interface Strategy {
+  id: number;
+  name: string;
+  number: string; // Strategy number (e.g., "1F", "2F", "3S")
+  description?: string;
+  type?: StrategyType;
+  market: MarketType; // Market type from backend
+  instrument: InstrumentType; // Instrument type from backend
+  is_active: boolean; // Active status from backend
+  created?: string; // Creation date from backend
+  modified?: string; // Modification date from backend
+  isActive?: boolean; // For compatibility
+  profitability?: number;
+  risk?: string;
+  createdAt?: string;
+  [key: string]: any;
+}
+
+export interface UpdateModelPortfolioItemRequest {
+  id_item: number;
+  edit_share: number;
+}

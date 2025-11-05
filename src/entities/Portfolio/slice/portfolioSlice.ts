@@ -4,7 +4,12 @@ import type {
   Portfolio,
   ReferenceData,
   PortfolioType,
-  PortfolioStatus
+  PortfolioStatus,
+  AddModelPortfolioRequest,
+  ViewModelPortfolioRequest,
+  ViewModelPortfolioResponse,
+  Strategy,
+  UpdateModelPortfolioItemRequest
 } from '../model/types';
 import type { RootState } from 'app/providers/store/config/store';
 
@@ -12,6 +17,8 @@ interface PortfolioState {
   portfolios: Portfolio[];
   referenceData: ReferenceData | null;
   selectedPortfolio: Portfolio | null;
+  strategies: Strategy[];
+  modelPortfolio: ViewModelPortfolioResponse | null;
   loading: boolean;
   error: string | null;
   filters: {
@@ -26,6 +33,8 @@ const initialState: PortfolioState = {
   portfolios: [],
   referenceData: null,
   selectedPortfolio: null,
+  strategies: [],
+  modelPortfolio: null,
   loading: false,
   error: null,
   filters: {
@@ -93,6 +102,93 @@ export const togglePortfolioStatus = createAsyncThunk(
       return portfolio;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка изменения статуса');
+    }
+  }
+);
+
+export const addModelPortfolio = createAsyncThunk(
+  'portfolio/addModelPortfolio',
+  async (data: AddModelPortfolioRequest, { rejectWithValue }) => {
+    try {
+      const result = await portfolioApi.addModelPortfolio(data);
+      return result;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка добавления модельного портфеля');
+    }
+  }
+);
+
+export const viewModelPortfolio = createAsyncThunk(
+  'portfolio/viewModelPortfolio',
+  async (data: ViewModelPortfolioRequest, { rejectWithValue }) => {
+    try {
+      const result = await portfolioApi.viewModelPortfolio(data);
+      return result;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки модельного портфеля');
+    }
+  }
+);
+
+export const fetchAllStrategies = createAsyncThunk(
+  'portfolio/fetchAllStrategies',
+  async (_, { rejectWithValue }) => {
+    try {
+      const strategies = await portfolioApi.getAllStrategies();
+      return strategies;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки стратегий');
+    }
+  }
+);
+
+export const updateModelPortfolioItem = createAsyncThunk(
+  'portfolio/updateModelPortfolioItem',
+  async (data: UpdateModelPortfolioItemRequest, { rejectWithValue }) => {
+    try {
+      const result = await portfolioApi.updateModelPortfolioItem(data);
+      return result;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка обновления элемента портфеля');
+    }
+  }
+);
+
+// Create strategy
+export const createStrategy = createAsyncThunk(
+  'portfolio/createStrategy',
+  async (data: Partial<Strategy>, { rejectWithValue }) => {
+    try {
+      const result = await portfolioApi.createStrategy(data);
+      return result;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка создания стратегии');
+    }
+  }
+);
+
+// Update strategy
+export const updateStrategy = createAsyncThunk(
+  'portfolio/updateStrategy',
+  async ({ id, data }: { id: number; data: Partial<Strategy> }, { rejectWithValue }) => {
+    try {
+      const result = await portfolioApi.updateStrategy(id, data);
+      return result;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка обновления стратегии');
+    }
+  }
+);
+
+// Delete strategy
+export const deleteStrategyThunk = createAsyncThunk(
+  'portfolio/deleteStrategy',
+  async (id: number, { rejectWithValue }) => {
+    try {
+      await portfolioApi.deleteStrategy(id);
+      return id;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка удаления стратегии');
     }
   }
 );
@@ -192,6 +288,112 @@ const portfolioSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       });
+
+    // Add model portfolio
+    builder
+      .addCase(addModelPortfolio.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addModelPortfolio.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(addModelPortfolio.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // View model portfolio
+    builder
+      .addCase(viewModelPortfolio.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(viewModelPortfolio.fulfilled, (state, action) => {
+        state.loading = false;
+        state.modelPortfolio = action.payload;
+      })
+      .addCase(viewModelPortfolio.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch all strategies
+    builder
+      .addCase(fetchAllStrategies.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllStrategies.fulfilled, (state, action) => {
+        state.loading = false;
+        state.strategies = action.payload;
+      })
+      .addCase(fetchAllStrategies.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Update model portfolio item
+    builder
+      .addCase(updateModelPortfolioItem.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateModelPortfolioItem.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(updateModelPortfolioItem.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Create strategy
+    builder
+      .addCase(createStrategy.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createStrategy.fulfilled, (state, action) => {
+        state.loading = false;
+        state.strategies.push(action.payload);
+      })
+      .addCase(createStrategy.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Update strategy
+    builder
+      .addCase(updateStrategy.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateStrategy.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.strategies.findIndex(s => s.id === action.payload.id);
+        if (index !== -1) {
+          state.strategies[index] = action.payload;
+        }
+      })
+      .addCase(updateStrategy.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Delete strategy
+    builder
+      .addCase(deleteStrategyThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteStrategyThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.strategies = state.strategies.filter(s => s.id !== action.payload);
+      })
+      .addCase(deleteStrategyThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
   },
 });
 
@@ -204,6 +406,8 @@ export const selectSelectedPortfolio = (state: RootState) => state.portfolio.sel
 export const selectPortfolioLoading = (state: RootState) => state.portfolio.loading;
 export const selectPortfolioError = (state: RootState) => state.portfolio.error;
 export const selectPortfolioFilters = (state: RootState) => state.portfolio.filters;
+export const selectStrategies = (state: RootState) => state.portfolio.strategies;
+export const selectModelPortfolio = (state: RootState) => state.portfolio.modelPortfolio;
 
 // Filtered portfolios selector
 export const selectFilteredPortfolios = (state: RootState) => {

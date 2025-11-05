@@ -237,11 +237,64 @@ const PortfolioListPage = () => {
       },
     },
     {
+      title: 'Целевая доходность',
+      dataIndex: 'targetReturn',
+      key: 'targetReturn',
+      width: 140,
+      align: 'right',
+      sorter: (a, b) => (a.targetReturn || 0) - (b.targetReturn || 0),
+      render: (value: number) => value ? `${value.toFixed(2)}%` : '—',
+    },
+    {
+      title: 'Макс. просадка',
+      dataIndex: 'maxDrawdown',
+      key: 'maxDrawdown',
+      width: 130,
+      align: 'right',
+      sorter: (a, b) => (a.maxDrawdown || 0) - (b.maxDrawdown || 0),
+      render: (value: number) => value ? `${value.toFixed(2)}%` : '—',
+    },
+    {
+      title: 'Волатильность',
+      dataIndex: 'volatility',
+      key: 'volatility',
+      width: 120,
+      align: 'right',
+      sorter: (a, b) => (a.volatility || 0) - (b.volatility || 0),
+      render: (value?: number) => value ? `${value.toFixed(2)}%` : '—',
+    },
+    {
+      title: 'Sharpe Ratio',
+      dataIndex: 'sharpeRatio',
+      key: 'sharpeRatio',
+      width: 120,
+      align: 'right',
+      sorter: (a, b) => (a.sharpeRatio || 0) - (b.sharpeRatio || 0),
+      render: (value?: number) => value ? value.toFixed(2) : '—',
+    },
+    {
+      title: 'VaR 95%',
+      dataIndex: 'var95',
+      key: 'var95',
+      width: 110,
+      align: 'right',
+      sorter: (a, b) => (a.var95 || 0) - (b.var95 || 0),
+      render: (value?: number) => value ? `${value.toFixed(2)}%` : '—',
+    },
+    {
       title: 'Дата создания',
       dataIndex: 'createdAt',
       key: 'createdAt',
       sorter: (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
       width: 120,
+      render: (date: string) => new Date(date).toLocaleDateString('ru-RU'),
+    },
+    {
+      title: 'Дата обновления',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      sorter: (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime(),
+      width: 130,
       render: (date: string) => new Date(date).toLocaleDateString('ru-RU'),
     },
     {
@@ -440,7 +493,7 @@ const PortfolioListPage = () => {
             pageSizeOptions: ['10', '25', '50', '100'],
             showTotal: (total) => `Всего портфелей: ${total}`,
           }}
-          scroll={{ x: 1800 }}
+          scroll={{ x: 2600 }}
           className={styles.table}
         />
       </Card>

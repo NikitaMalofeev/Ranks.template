@@ -18,7 +18,7 @@ apiClient.interceptors.request.use(
     const token = state.user.token;
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `token ${token}`;
       console.log('[API Request] URL:', config.url);
       console.log('[API Request] Token (first 20 chars):', token.substring(0, 20) + '...');
       console.log('[API Request] Authorization header:', config.headers.Authorization);

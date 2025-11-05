@@ -26,8 +26,8 @@ const rootReducer = combineReducers({
 const persistConfig = {
     key: 'root',
     storage,
-    // Убрали 'user' из whitelist, чтобы при каждой новой сессии запрашивался логин
-    whitelist: ['menuSettings', 'portfolio', 'tabs'],
+    // Добавили 'user' чтобы сохранять сессию на 100000 часов
+    whitelist: ['user', 'menuSettings', 'portfolio', 'tabs'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
