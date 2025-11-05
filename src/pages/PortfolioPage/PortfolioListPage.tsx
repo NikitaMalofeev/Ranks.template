@@ -35,19 +35,23 @@ import { useSelector } from 'react-redux';
 import { useAppDispatch } from 'shared/hooks/useAppDispatch';
 import {
   fetchReferenceData,
-  fetchPortfolios,
+  fetchGroupPortfolios,
   deletePortfolio,
   togglePortfolioStatus,
   setFilters,
   resetFilters,
+  setSelectedBroker,
   selectFilteredPortfolios,
   selectPortfolioLoading,
   selectPortfolioError,
   selectPortfolioFilters,
+  selectSelectedBroker,
   PortfolioType,
   PortfolioStatus,
-  type Portfolio
+  type Portfolio,
+  type BrokerType
 } from 'entities/Portfolio';
+import { BrokerSelector } from 'features/BrokerSelector';
 import styles from './PortfolioListPage.module.scss';
 
 const { Title } = Typography;
@@ -59,14 +63,27 @@ const PortfolioListPage = () => {
   const loading = useSelector(selectPortfolioLoading);
   const error = useSelector(selectPortfolioError);
   const filters = useSelector(selectPortfolioFilters);
+  const selectedBroker = useSelector(selectSelectedBroker);
 
   const [profitRange, setProfitRange] = useState<[number, number]>([-100, 200]);
+  const [showBrokerSelector, setShowBrokerSelector] = useState(!selectedBroker);
 
   useEffect(() => {
-    // Load reference data and portfolios on mount
-    dispatch(fetchReferenceData());
-    dispatch(fetchPortfolios());
-  }, [dispatch]);
+    // Show broker selector if no broker is selected
+    if (!selectedBroker) {
+      setShowBrokerSelector(true);
+    } else {
+      // Load reference data and portfolios with selected broker
+      dispatch(fetchReferenceData(selectedBroker));
+      dispatch(fetchGroupPortfolios(selectedBroker));
+    }
+  }, [dispatch, selectedBroker]);
+
+  const handleBrokerSelect = (broker: BrokerType) => {
+    dispatch(setSelectedBroker(broker));
+    setShowBrokerSelector(false);
+    message.success(`Выбран брокер: ${broker}`);
+  };
 
   useEffect(() => {
     if (error) {
@@ -75,7 +92,9 @@ const PortfolioListPage = () => {
   }, [error]);
 
   const handleRefresh = () => {
-    dispatch(fetchPortfolios());
+    if (selectedBroker) {
+      dispatch(fetchGroupPortfolios(selectedBroker));
+    }
   };
 
   const handleFilterChange = (key: string, value: any) => {
@@ -380,6 +399,12 @@ const PortfolioListPage = () => {
 
   return (
     <div className={styles.portfolioListPage}>
+      <BrokerSelector
+        visible={showBrokerSelector}
+        onSelect={handleBrokerSelect}
+        onCancel={() => setShowBrokerSelector(false)}
+      />
+
       <Card>
         <div className={styles.header}>
           <FileTextOutlined className={styles.icon} />

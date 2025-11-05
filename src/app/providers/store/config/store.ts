@@ -16,10 +16,17 @@ import menuSettingsReducer from 'entities/MenuSettings/slice/menuSettingsSlice';
 import portfolioReducer from 'entities/Portfolio/slice/portfolioSlice';
 import tabsReducer from 'entities/Tabs/slice/tabsSlice';
 
+// Конфигурация persist для portfolio - сохраняем только selectedBroker
+const portfolioPersistConfig = {
+    key: 'portfolio',
+    storage,
+    whitelist: ['selectedBroker'], // Сохраняем только выбранного брокера, не все данные портфелей
+};
+
 const rootReducer = combineReducers({
     user: userReducer,
     menuSettings: menuSettingsReducer,
-    portfolio: portfolioReducer,
+    portfolio: persistReducer(portfolioPersistConfig, portfolioReducer),
     tabs: tabsReducer,
 });
 
@@ -27,7 +34,8 @@ const persistConfig = {
     key: 'root',
     storage,
     // Добавили 'user' чтобы сохранять сессию на 100000 часов
-    whitelist: ['user', 'menuSettings', 'portfolio', 'tabs'],
+    // Убрали 'portfolio' из whitelist, т.к. он имеет свой собственный persistConfig
+    whitelist: ['user', 'menuSettings', 'tabs'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

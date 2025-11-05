@@ -19,6 +19,7 @@ export const API_ENDPOINTS = {
   ROBOADVISING: {
     GET_REFERENCE_DATA: '/roboadvising/get_general_reference_data/', // Убрали /main
     GET_PORTFOLIOS: '/roboadvising/portfolios/', // Убрали /main
+    GET_GROUP_PORTFOLIOS: '/roboadvising/get_group_portfolios/', // Новый эндпоинт для получения портфелей по брокеру
     CREATE_PORTFOLIO: '/roboadvising/portfolios/create/', // Убрали /main
     UPDATE_PORTFOLIO: '/roboadvising/portfolios/update/', // Убрали /main
     DELETE_PORTFOLIO: '/roboadvising/portfolios/delete/', // Убрали /main

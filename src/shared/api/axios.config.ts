@@ -5,7 +5,7 @@ import { store } from 'app/providers/store/config/store';
 // Create axios instance
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 60000, // Увеличили до 60 секунд для больших запросов (например, get_group_portfolios)
   headers: {
     'Content-Type': 'application/json',
   },

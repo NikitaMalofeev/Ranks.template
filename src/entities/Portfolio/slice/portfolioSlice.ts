@@ -9,7 +9,8 @@ import type {
   ViewModelPortfolioRequest,
   ViewModelPortfolioResponse,
   Strategy,
-  UpdateModelPortfolioItemRequest
+  UpdateModelPortfolioItemRequest,
+  BrokerType
 } from '../model/types';
 import type { RootState } from 'app/providers/store/config/store';
 
@@ -17,6 +18,7 @@ interface PortfolioState {
   portfolios: Portfolio[];
   referenceData: ReferenceData | null;
   selectedPortfolio: Portfolio | null;
+  selectedBroker: BrokerType | null;
   strategies: Strategy[];
   modelPortfolio: ViewModelPortfolioResponse | null;
   loading: boolean;
@@ -33,6 +35,7 @@ const initialState: PortfolioState = {
   portfolios: [],
   referenceData: null,
   selectedPortfolio: null,
+  selectedBroker: null,
   strategies: [],
   modelPortfolio: null,
   loading: false,
@@ -48,9 +51,9 @@ const initialState: PortfolioState = {
 // Async thunks
 export const fetchReferenceData = createAsyncThunk(
   'portfolio/fetchReferenceData',
-  async (_, { rejectWithValue }) => {
+  async (broker: BrokerType, { rejectWithValue }) => {
     try {
-      const data = await portfolioApi.getReferenceData();
+      const data = await portfolioApi.getReferenceData(broker);
       return data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки справочных данных');
@@ -63,6 +66,18 @@ export const fetchPortfolios = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const portfolios = await portfolioApi.getPortfolios();
+      return portfolios;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки портфелей');
+    }
+  }
+);
+
+export const fetchGroupPortfolios = createAsyncThunk(
+  'portfolio/fetchGroupPortfolios',
+  async (broker: BrokerType, { rejectWithValue }) => {
+    try {
+      const portfolios = await portfolioApi.getGroupPortfolios(broker);
       return portfolios;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.message || 'Ошибка загрузки портфелей');
@@ -209,6 +224,9 @@ const portfolioSlice = createSlice({
     setSelectedPortfolio: (state, action: PayloadAction<Portfolio | null>) => {
       state.selectedPortfolio = action.payload;
     },
+    setSelectedBroker: (state, action: PayloadAction<BrokerType | null>) => {
+      state.selectedBroker = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Fetch reference data
@@ -237,6 +255,21 @@ const portfolioSlice = createSlice({
         state.portfolios = action.payload;
       })
       .addCase(fetchPortfolios.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch group portfolios
+    builder
+      .addCase(fetchGroupPortfolios.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchGroupPortfolios.fulfilled, (state, action) => {
+        state.loading = false;
+        state.portfolios = action.payload;
+      })
+      .addCase(fetchGroupPortfolios.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
@@ -397,12 +430,13 @@ const portfolioSlice = createSlice({
   },
 });
 
-export const { setFilters, resetFilters, clearError, setSelectedPortfolio } = portfolioSlice.actions;
+export const { setFilters, resetFilters, clearError, setSelectedPortfolio, setSelectedBroker } = portfolioSlice.actions;
 
 // Selectors
 export const selectPortfolios = (state: RootState) => state.portfolio.portfolios;
 export const selectReferenceData = (state: RootState) => state.portfolio.referenceData;
 export const selectSelectedPortfolio = (state: RootState) => state.portfolio.selectedPortfolio;
+export const selectSelectedBroker = (state: RootState) => state.portfolio.selectedBroker;
 export const selectPortfolioLoading = (state: RootState) => state.portfolio.loading;
 export const selectPortfolioError = (state: RootState) => state.portfolio.error;
 export const selectPortfolioFilters = (state: RootState) => state.portfolio.filters;

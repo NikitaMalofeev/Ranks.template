@@ -143,3 +143,39 @@ export interface UpdateModelPortfolioItemRequest {
   id_item: number;
   edit_share: number;
 }
+
+// Broker types
+export type BrokerType = 'tradernet_ff' | 'tinkoff_brokers' | 'finam_broker';
+
+// Response from get_group_portfolios API
+export interface MoneyValue {
+  currency: string;
+  nano: number;
+  units: number;
+}
+
+export interface PortfolioPosition {
+  average_position_price: MoneyValue;
+  average_position_price_fifo: MoneyValue;
+  average_position_price_pt: MoneyValue;
+  blocked: boolean;
+  blocked_lots: MoneyValue;
+  current_nkd: MoneyValue;
+  current_price: MoneyValue;
+  expected_yield: MoneyValue;
+  expected_yield_fifo: MoneyValue;
+  figi: string;
+  instrument_type: string;
+  instrument_uid: string;
+  position_uid: string;
+  quantity: MoneyValue;
+  quantity_lots: MoneyValue;
+  var_margin: MoneyValue;
+}
+
+export interface GroupPortfoliosResponse {
+  count: number;
+  data: {
+    [portfolioId: string]: PortfolioPosition[];
+  };
+}

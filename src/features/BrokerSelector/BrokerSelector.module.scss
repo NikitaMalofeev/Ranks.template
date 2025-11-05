@@ -1,0 +1,20 @@
+.brokerSelector {
+  .content {
+    padding: 20px 0;
+
+    p {
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.85);
+    }
+  }
+
+  .radioGroup {
+    width: 100%;
+  }
+
+  .radioOption {
+    font-size: 16px;
+    padding: 8px 0;
+  }
+}

@@ -12,12 +12,14 @@ export type {
   UpdatePortfolioDto,
   RebalanceRequest,
   RebalanceResponse,
+  BrokerType,
 } from './model/types';
 
 // Экспорт Redux actions и selectors
 export {
   fetchReferenceData,
   fetchPortfolios,
+  fetchGroupPortfolios,
   fetchPortfolioById,
   deletePortfolio,
   togglePortfolioStatus,
@@ -28,9 +30,11 @@ export {
   resetFilters,
   clearError,
   setSelectedPortfolio,
+  setSelectedBroker,
   selectPortfolios,
   selectReferenceData,
   selectSelectedPortfolio,
+  selectSelectedBroker,
   selectPortfolioLoading,
   selectPortfolioError,
   selectPortfolioFilters,
