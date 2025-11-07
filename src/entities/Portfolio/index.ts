@@ -13,6 +13,13 @@ export type {
   RebalanceRequest,
   RebalanceResponse,
   BrokerType,
+  ModelPortfolioItem,
+  ModelPortfolioPosition,
+  ViewModelPortfolioRequest,
+  ViewModelPortfolioResponse,
+  Strategy,
+  InstrumentApiData,
+  InstrumentBrand,
 } from './model/types';
 
 // Экспорт Redux actions и selectors
@@ -26,6 +33,8 @@ export {
   createStrategy,
   updateStrategy,
   deleteStrategyThunk,
+  viewModelPortfolio,
+  fetchAllStrategies,
   setFilters,
   resetFilters,
   clearError,
@@ -39,4 +48,6 @@ export {
   selectPortfolioError,
   selectPortfolioFilters,
   selectFilteredPortfolios,
+  selectModelPortfolio,
+  selectStrategies,
 } from './slice/portfolioSlice';

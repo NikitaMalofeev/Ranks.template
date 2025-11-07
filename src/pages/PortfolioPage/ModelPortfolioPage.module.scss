@@ -1,0 +1,42 @@
+.modelPortfolioPage {
+  padding: 0;
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    .icon {
+      font-size: 28px;
+      color: #1890ff;
+    }
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .selectionCard {
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  }
+
+  .statsCard {
+    margin-bottom: 16px;
+  }
+
+  .strategyInfo {
+    margin-bottom: 16px;
+  }
+
+  .table {
+    margin-top: 16px;
+
+    :global {
+      .ant-table-cell {
+        font-size: 13px;
+      }
+    }
+  }
+}

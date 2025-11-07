@@ -19,6 +19,7 @@ const StrategiesAllPage = lazy(() => import('pages/StrategiesPage/StrategiesAllP
 const StrategiesBacktestingPage = lazy(() => import('pages/StrategiesPage/StrategiesBacktestingPage'));
 const PortfolioCreatePage = lazy(() => import('pages/PortfolioPage/PortfolioCreatePage'));
 const PortfolioListPage = lazy(() => import('pages/PortfolioPage/PortfolioListPage'));
+const ModelPortfolioPage = lazy(() => import('pages/PortfolioPage/ModelPortfolioPage'));
 const RiskAssessmentPage = lazy(() => import('pages/RiskPage/RiskAssessmentPage'));
 const RiskLimitsPage = lazy(() => import('pages/RiskPage/RiskLimitsPage'));
 const QuikQuotesPage = lazy(() => import('pages/QuikPage/QuikQuotesPage'));
@@ -1037,6 +1038,13 @@ const AdminPage = () => {
         return (
           <Suspense fallback={<Loader />}>
             <PortfolioListPage />
+          </Suspense>
+        );
+
+      case 'portfolio-model':
+        return (
+          <Suspense fallback={<Loader />}>
+            <ModelPortfolioPage />
           </Suspense>
         );
 

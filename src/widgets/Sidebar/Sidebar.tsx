@@ -116,6 +116,11 @@ export const Sidebar = ({ collapsed = false, onCollapse, onMenuSelect, onSetting
           icon: <FileTextOutlined />,
           label: 'Список портфелей',
         },
+        {
+          key: 'portfolio-model',
+          icon: <RiseOutlined />,
+          label: 'Модельный портфель',
+        },
       ],
     },
     {

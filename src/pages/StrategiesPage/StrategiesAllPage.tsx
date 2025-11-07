@@ -39,7 +39,7 @@ import {
   selectPortfolioLoading,
   selectPortfolioError
 } from 'entities/Portfolio/slice/portfolioSlice';
-import type { Strategy, StrategyType, MarketType, InstrumentType } from 'entities/Portfolio/model/types';
+import type { Strategy, MarketType, InstrumentType } from 'entities/Portfolio/model/types';
 import styles from './StrategiesPage.module.scss';
 
 const { Title } = Typography;
@@ -52,7 +52,7 @@ const StrategiesAllPage = () => {
   const error = useAppSelector(selectPortfolioError);
 
   const [searchText, setSearchText] = useState('');
-  const [filterType, setFilterType] = useState<StrategyType | 'all'>('all');
+  const [filterType, setFilterType] = useState<'russian' | 'global' | 'all'>('all');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingStrategy, setEditingStrategy] = useState<Strategy | null>(null);
   const [updatedRows, setUpdatedRows] = useState<Set<number>>(new Set());
@@ -106,7 +106,8 @@ const StrategiesAllPage = () => {
   // Фильтрация стратегий
   const filteredStrategies = strategies.filter((strategy) => {
     const matchesSearch = strategy.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                         strategy.description?.toLowerCase().includes(searchText.toLowerCase());
+                         strategy.description.toLowerCase().includes(searchText.toLowerCase()) ||
+                         strategy.full_name.toLowerCase().includes(searchText.toLowerCase());
     const matchesType = filterType === 'all' ||
                         (filterType === 'russian' && strategy.market === 'market_robo_russian') ||
                         (filterType === 'global' && strategy.market === 'market_robo_usa');
@@ -223,6 +224,13 @@ const StrategiesAllPage = () => {
       render: (number) => <Tag color="purple">{number}</Tag>
     },
     {
+      title: 'Полное название',
+      dataIndex: 'full_name',
+      key: 'full_name',
+      width: 250,
+      sorter: (a, b) => a.full_name.localeCompare(b.full_name),
+    },
+    {
       title: 'Статус',
       dataIndex: 'is_active',
       key: 'is_active',
@@ -273,43 +281,6 @@ const StrategiesAllPage = () => {
           {text || '-'}
         </Tooltip>
       )
-    },
-    {
-      title: 'Доходность',
-      dataIndex: 'profitability',
-      key: 'profitability',
-      width: 120,
-      sorter: (a, b) => (a.profitability || 0) - (b.profitability || 0),
-      render: (value) => {
-        if (value === undefined || value === null) return '-';
-        const color = value >= 0 ? '#52c41a' : '#ff4d4f';
-        return (
-          <span style={{ color, fontWeight: 'bold' }}>
-            {value >= 0 ? '+' : ''}{value}%
-          </span>
-        );
-      }
-    },
-    {
-      title: 'Риск',
-      dataIndex: 'risk',
-      key: 'risk',
-      width: 120,
-      filters: [
-        { text: 'Низкий', value: 'low' },
-        { text: 'Средний', value: 'medium' },
-        { text: 'Высокий', value: 'high' }
-      ],
-      onFilter: (value, record) => record.risk === value,
-      render: (risk) => {
-        const config: Record<string, { color: string, text: string }> = {
-          low: { color: 'green', text: 'Низкий' },
-          medium: { color: 'orange', text: 'Средний' },
-          high: { color: 'red', text: 'Высокий' }
-        };
-        const riskConfig = risk ? config[risk] : null;
-        return riskConfig ? <Tag color={riskConfig.color}>{riskConfig.text}</Tag> : '-';
-      }
     },
     {
       title: 'Дата создания',
@@ -516,28 +487,6 @@ const StrategiesAllPage = () => {
                   <Select placeholder="Выберите инструмент">
                     <Select.Option value="instrument_bonds">Облигации</Select.Option>
                     <Select.Option value="instrument_shares">Акции</Select.Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item name="profitability" label="Доходность (%)">
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    min={-100}
-                    max={1000}
-                    placeholder="0"
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="risk" label="Уровень риска">
-                  <Select placeholder="Выберите риск">
-                    <Select.Option value="low">Низкий</Select.Option>
-                    <Select.Option value="medium">Средний</Select.Option>
-                    <Select.Option value="high">Высокий</Select.Option>
                   </Select>
                 </Form.Item>
               </Col>
