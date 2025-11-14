@@ -12,4 +12,17 @@
       color: #1890ff;
     }
   }
+
+  // Подсветка строк с ошибками красным (как в Excel методике)
+  .errorRow {
+    background-color: rgba(255, 77, 79, 0.1) !important;
+
+    &:hover {
+      background-color: rgba(255, 77, 79, 0.15) !important;
+    }
+
+    td {
+      border-bottom: 1px solid rgba(255, 77, 79, 0.3) !important;
+    }
+  }
 }

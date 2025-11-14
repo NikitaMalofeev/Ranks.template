@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Typography,
   Card,
@@ -132,6 +132,71 @@ const ExecutionsHistoryPage = () => {
       comment: 'Отменено вручную'
     }
   ];
+
+  // Фильтрация данных
+  const filteredData = useMemo(() => {
+    let result = [...mockData];
+
+    // Фильтр по инструменту
+    if (filterInstrument !== 'all') {
+      result = result.filter(item => item.ticker === filterInstrument);
+    }
+
+    // Фильтр по типу операции
+    if (filterOperation !== 'all') {
+      result = result.filter(item => item.operationType === filterOperation);
+    }
+
+    // Фильтр по статусу
+    if (filterStatus.length > 0) {
+      result = result.filter(item => filterStatus.includes(item.status));
+    }
+
+    // Фильтр по стратегии
+    if (filterStrategy !== 'all') {
+      const strategyMap: Record<string, string> = {
+        'momentum': 'Momentum Pro',
+        'arbitrage': 'Arbitrage Master',
+        'value': 'Value Growth',
+        'dividend': 'Dividend Plus'
+      };
+      const strategyName = strategyMap[filterStrategy];
+      if (strategyName) {
+        result = result.filter(item => item.strategy === strategyName);
+      }
+    }
+
+    // Фильтр по периоду
+    if (filterPeriod !== 'all') {
+      const now = dayjs();
+      result = result.filter(item => {
+        const itemDate = dayjs(item.datetime);
+        switch (filterPeriod) {
+          case 'today':
+            return itemDate.isSame(now, 'day');
+          case 'week':
+            return itemDate.isAfter(now.subtract(7, 'day'));
+          case 'month':
+            return itemDate.isAfter(now.subtract(30, 'day'));
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Глобальный поиск
+    if (searchText) {
+      const search = searchText.toLowerCase();
+      result = result.filter(item =>
+        item.ticker.toLowerCase().includes(search) ||
+        item.securityName.toLowerCase().includes(search) ||
+        item.strategy.toLowerCase().includes(search) ||
+        (item.comment && item.comment.toLowerCase().includes(search))
+      );
+    }
+
+    return result;
+  }, [mockData, filterInstrument, filterOperation, filterStatus, filterStrategy, filterPeriod, searchText]);
 
   const columns: ColumnsType<ExecutionRecord> = [
     {
@@ -267,10 +332,10 @@ const ExecutionsHistoryPage = () => {
     { key: 'pdf', label: 'PDF отчет' },
   ];
 
-  // Calculate totals
-  const totalTrades = mockData.length;
-  const totalVolume = mockData.reduce((sum, record) => sum + record.totalAmount, 0);
-  const totalCommission = mockData.reduce((sum, record) => sum + record.commission, 0);
+  // Calculate totals (используем filteredData вместо mockData)
+  const totalTrades = filteredData.length;
+  const totalVolume = filteredData.reduce((sum, record) => sum + record.totalAmount, 0);
+  const totalCommission = filteredData.reduce((sum, record) => sum + record.commission, 0);
 
   return (
     <div className={styles.executionsHistoryPage}>
@@ -442,7 +507,7 @@ const ExecutionsHistoryPage = () => {
         {/* Main Table */}
         <Table
           columns={columns}
-          dataSource={mockData}
+          dataSource={filteredData}
           pagination={{
             pageSize: 25,
             showSizeChanger: true,
@@ -451,6 +516,35 @@ const ExecutionsHistoryPage = () => {
           }}
           scroll={{ x: 1500 }}
           className={styles.table}
+          rowClassName={(record) => {
+            // Цветовая кодировка строк по статусу
+            if (record.status === 'EXECUTED') return styles.rowExecuted;
+            if (record.status === 'PARTIAL') return styles.rowPartial;
+            if (record.status === 'CANCELLED' || record.status === 'ERROR') return styles.rowCancelledOrError;
+            return '';
+          }}
+          summary={() => (
+            <Table.Summary fixed>
+              <Table.Summary.Row style={{ backgroundColor: '#fafafa', fontWeight: 'bold' }}>
+                <Table.Summary.Cell index={0} colSpan={4}>
+                  <strong>Итого:</strong>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={4} align="right">
+                  <strong>{filteredData.reduce((sum, r) => sum + r.quantity, 0)}</strong>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={5} colSpan={1} />
+                <Table.Summary.Cell index={6} align="right">
+                  <strong>{totalVolume.toLocaleString()} ₽</strong>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={7} align="right">
+                  <strong>{totalCommission.toFixed(2)} ₽</strong>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={8} colSpan={4}>
+                  <strong>Сделок: {totalTrades}</strong>
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+            </Table.Summary>
+          )}
         />
       </Card>
 

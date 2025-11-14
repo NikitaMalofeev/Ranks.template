@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Typography, Card, Form, Select, Button, Table, InputNumber, Switch, Space, message, Radio, Divider } from 'antd';
-import { FileOutlined, PlusOutlined, DeleteOutlined, SaveOutlined, EditOutlined } from '@ant-design/icons';
+import { useEffect, useState, useMemo } from 'react';
+import { Typography, Card, Form, Select, Button, Table, InputNumber, Switch, Space, message, Radio, Divider, Alert, Statistic } from 'antd';
+import { FileOutlined, PlusOutlined, DeleteOutlined, SaveOutlined, EditOutlined, WarningOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from 'app/providers/store/config/hooks';
 import {
   fetchAllStrategies,
@@ -15,7 +15,7 @@ import {
 import type { ModelPortfolioItem } from 'entities/Portfolio/model/types';
 import styles from './PortfolioPage.module.scss';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 type Mode = 'create' | 'edit';
 
@@ -30,6 +30,43 @@ const PortfolioCreatePage = () => {
   const [mode, setMode] = useState<Mode>('create');
   const [selectedStrategy, setSelectedStrategy] = useState<number | null>(null);
   const [portfolioItems, setPortfolioItems] = useState<ModelPortfolioItem[]>([]);
+
+  // Валидация и расчеты
+  const totalShare = useMemo(() => {
+    return portfolioItems.reduce((sum, item) => sum + (item.share || 0), 0);
+  }, [portfolioItems]);
+
+  const hasErrors = useMemo(() => {
+    // Проверка на дубликаты ISIN
+    const isinSet = new Set();
+    const hasDuplicates = portfolioItems.some(item => {
+      if (!item.isin) return false;
+      if (isinSet.has(item.isin)) return true;
+      isinSet.add(item.isin);
+      return false;
+    });
+
+    // Проверка на пустые обязательные поля
+    const hasEmptyFields = portfolioItems.some(item => !item.isin || item.share <= 0);
+
+    return hasDuplicates || hasEmptyFields;
+  }, [portfolioItems]);
+
+  const getRowClassName = (record: ModelPortfolioItem, index: number) => {
+    const item = portfolioItems[index];
+    // Красная подсветка если:
+    // 1. ISIN пустой
+    // 2. Доля <= 0 или > 100
+    // 3. Дубликат ISIN
+    const hasEmptyIsin = !item?.isin;
+    const hasInvalidShare = item && (item.share <= 0 || item.share > 100);
+    const isDuplicate = item?.isin && portfolioItems.filter(i => i.isin === item.isin).length > 1;
+
+    if (hasEmptyIsin || hasInvalidShare || isDuplicate) {
+      return styles.errorRow;
+    }
+    return '';
+  };
 
   useEffect(() => {
     dispatch(fetchAllStrategies());
@@ -99,12 +136,36 @@ const PortfolioCreatePage = () => {
       return;
     }
 
+    // Проверка суммы долей
+    const sum = validItems.reduce((acc, item) => acc + item.share, 0);
+    if (Math.abs(sum - 100) > 0.01) {
+      message.error(`Сумма долей должна быть равна 100%. Текущая сумма: ${sum.toFixed(2)}%`);
+      return;
+    }
+
+    // Проверка дубликатов
+    const isinSet = new Set();
+    const hasDuplicates = validItems.some(item => {
+      if (isinSet.has(item.isin)) return true;
+      isinSet.add(item.isin);
+      return false;
+    });
+
+    if (hasDuplicates) {
+      message.error('Обнаружены дубликаты ISIN. Удалите повторяющиеся инструменты.');
+      return;
+    }
+
     try {
       await dispatch(addModelPortfolio({
         id_strategy: selectedStrategy,
         items: validItems
       })).unwrap();
       message.success('Модельный портфель успешно добавлен');
+      // Очистить форму после успешного создания
+      if (mode === 'create') {
+        setPortfolioItems([]);
+      }
     } catch (err) {
       message.error('Ошибка при добавлении модельного портфеля');
     }
@@ -244,6 +305,45 @@ const PortfolioCreatePage = () => {
                 Добавить инструмент
               </Button>
 
+              {/* Статистика и валидация */}
+              {portfolioItems.length > 0 && (
+                <Card size="small" style={{ marginBottom: 16 }}>
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    <Statistic
+                      title="Общая сумма долей"
+                      value={totalShare.toFixed(2)}
+                      suffix="%"
+                      valueStyle={{
+                        color: Math.abs(totalShare - 100) < 0.01 ? '#52c41a' : '#ff4d4f'
+                      }}
+                      prefix={
+                        Math.abs(totalShare - 100) < 0.01 ? (
+                          <CheckCircleOutlined />
+                        ) : (
+                          <WarningOutlined />
+                        )
+                      }
+                    />
+                    {Math.abs(totalShare - 100) > 0.01 && (
+                      <Alert
+                        message="Внимание!"
+                        description={`Сумма долей должна быть равна 100%. Текущая сумма: ${totalShare.toFixed(2)}%`}
+                        type="warning"
+                        showIcon
+                      />
+                    )}
+                    {hasErrors && (
+                      <Alert
+                        message="Обнаружены ошибки"
+                        description="Проверьте строки выделенные красным: заполните все обязательные поля, удалите дубликаты и исправьте некорректные значения."
+                        type="error"
+                        showIcon
+                      />
+                    )}
+                  </Space>
+                </Card>
+              )}
+
               <Table
                 dataSource={portfolioItems}
                 columns={columns}
@@ -251,6 +351,26 @@ const PortfolioCreatePage = () => {
                 pagination={false}
                 loading={loading}
                 locale={{ emptyText: 'Нет инструментов' }}
+                rowClassName={getRowClassName}
+                summary={() =>
+                  portfolioItems.length > 0 ? (
+                    <Table.Summary fixed>
+                      <Table.Summary.Row style={{ backgroundColor: '#fafafa' }}>
+                        <Table.Summary.Cell index={0} colSpan={2}>
+                          <strong>Итого:</strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={2}>
+                          <strong style={{
+                            color: Math.abs(totalShare - 100) < 0.01 ? '#52c41a' : '#ff4d4f'
+                          }}>
+                            {totalShare.toFixed(2)}%
+                          </strong>
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={3} />
+                      </Table.Summary.Row>
+                    </Table.Summary>
+                  ) : null
+                }
               />
             </Space>
           </Form.Item>
